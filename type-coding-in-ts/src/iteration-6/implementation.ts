@@ -28,7 +28,6 @@ type VideoSelection = {
     url: `https://www.youtube.com/embed/${string}`
 };
 
-
 const videoDefaults: VideoSettings = {
     mainTitle: "GOTO Amsterdam 2019 Highlights",
     mainUrl: "https://www.youtube.com/embed/0sVzFzOXSPY",
@@ -38,7 +37,7 @@ const videoDefaults: VideoSettings = {
     width: "560"
 }
 
-const videoSelections: VideoSelection[] = [
+const videoSelection: VideoSelection[] = [
     {
         title: "Knowing Me, Knowing You",
         url: "https://www.youtube.com/embed/iUrzicaiRLU"
@@ -62,13 +61,38 @@ let backupVideo: VideoBackupSettings = {
     backupTitle: videoDefaults.backupTitle
 }
 
+type PageElements = {
+    videoSettingsForm: HTMLFormElement,
+    videoHeight: HTMLInputElement,
+    videoWidth: HTMLInputElement,
+    mainVideoURL: HTMLSelectElement,
+    backupVideoURL: HTMLSelectElement,
+    videoTitle: HTMLHeadingElement,
+    theVideo: HTMLIFrameElement,
+    switchButton: HTMLButtonElement
+}
+
+type ResultElement<T extends string> =
+    T extends keyof PageElements ? PageElements[T] : HTMLElement;
+
+type FieldNames<T> = keyof T;
+
+function findElementWithID<T extends FieldNames<PageElements>>(id: T): ResultElement<T> {
+    const result = document.getElementById(id);
+    if (result === null) {
+        throw new Error(`Cannot find Element with id: ${id}`);
+    }
+    return result as ResultElement<T>;
+}
+
 function loadFormControls(): FormControls {
+
     const controls: FormControlsOptional = {};
-    controls.form = document.getElementById("videoSettingsForm") as HTMLFormElement;
-    controls.height = document.getElementById("videoHeight") as HTMLInputElement;
-    controls.width = document.getElementById("videoWidth") as HTMLInputElement;
-    controls.mainVideo = document.getElementById("mainVideoURL") as HTMLSelectElement;
-    controls.backupVideo = document.getElementById("backupVideoURL") as HTMLSelectElement;
+    controls.form = findElementWithID("videoSettingsForm");
+    controls.height = findElementWithID("videoHeight");
+    controls.width = findElementWithID("videoWidth");
+    controls.mainVideo = findElementWithID("mainVideoURL");
+    controls.backupVideo = findElementWithID("backupVideoURL");
 
     return controls as FormControls;
 }
@@ -101,20 +125,39 @@ function loadSettings(): VideoSettings {
     return settings as VideoSettings;
 }
 
+type NumericFields<T> = {
+    [K in keyof T as T[K] extends number ? K : never] : T[K]
+};
+
+type VideoPrefix<T> = {
+    [K in keyof T as `video${Capitalize<string & K>}`] : T[K]
+}
+
+type VideoDimensions = VideoPrefix<Stringify<NumericFields<VideoModel>>>;
+
+function logSizeChange(size: VideoDimensions) {
+    console.log(`Changing video size to ${size.videoHeight} by ${size.videoWidth}`);
+}
+
 function onFormSubmit(event: Event) {
     console.log("Settings form submitted");
 
     event.preventDefault();
 
-    const videoTitle = document.getElementById("videoTitle") as HTMLHeadingElement;
-    const video = document.getElementById("theVideo") as HTMLIFrameElement;
+    const videoTitle = findElementWithID("videoTitle");
+    const video = findElementWithID("theVideo");
 
     const settings = loadSettings();
 
     video.height = settings.height;
     video.width = settings.width;
-    video.src = settings.mainUrl;
 
+    logSizeChange({
+        videoHeight: settings.height,
+        videoWidth: settings.width
+    });
+
+    video.src = settings.mainUrl;
     videoTitle.textContent = settings.mainTitle;
 
     backupVideo.backupTitle = settings.backupTitle;
@@ -126,15 +169,15 @@ function switchVideo(event: Event) {
 
     event.preventDefault();
 
-    const videoTitle = document.getElementById("videoTitle") as HTMLHeadElement;
-    const video = document.getElementById("theVideo") as HTMLIFrameElement;
+    const videoTitle = findElementWithID("videoTitle");
+    const video = findElementWithID("theVideo");
 
     videoTitle.textContent = backupVideo.backupTitle;
     video.src = backupVideo.backupUrl;
 }
 
 function populateSelectWithOptions(select: HTMLSelectElement) {
-    videoSelections.forEach(item => {
+    videoSelection.forEach(item => {
         const option = document.createElement("option");
         option.setAttribute("value", item.url);
         option.textContent = item.title;
@@ -142,12 +185,12 @@ function populateSelectWithOptions(select: HTMLSelectElement) {
     });
 }
 
-export function doSetupV3() {
+export function doSetupV6() {
     const controls = loadFormControls();
 
-    const switchButton = document.getElementById("switchButton") as HTMLButtonElement;
-    const videoTitle = document.getElementById("videoTitle") as HTMLHeadingElement;
-    const video = document.getElementById("theVideo") as HTMLIFrameElement;
+    const switchButton = findElementWithID("switchButton");
+    const videoTitle = findElementWithID("videoTitle");
+    const video = findElementWithID("theVideo");
 
     populateSelectWithOptions(controls.mainVideo);
     populateSelectWithOptions(controls.backupVideo);

@@ -1,11 +1,3 @@
-type GotoPartial<T> = {
-    [K in keyof T]?: T[K];
-};
-
-type GotoStringify<T> = {
-    [K in keyof T]: string;
-};
-
 type VideoModel = {
     mainTitle: string;
     mainUrl: URL;
@@ -23,13 +15,17 @@ type FormControls = {
     backupVideo: HTMLSelectElement
 }
 
-type FormControlsOptional = GotoPartial<FormControls>;
-type VideoSettings = GotoStringify<VideoModel>;
-type VideoSettingsOptional = GotoPartial<VideoSettings>;
+type Stringify<T> = {
+    [K in keyof T]: string;
+}
 
-type VideoBackupSettings = {
-    backupTitle: string;
-    backupUrl: string;
+type FormControlsOptional = Partial<FormControls>;
+type VideoSettings = Stringify<VideoModel>;
+type VideoSettingsOptional = Partial<VideoSettings>;
+type VideoBackupSettings = Pick<VideoSettings, "backupTitle" | "backupUrl">;
+type VideoSelection = {
+    title: string,
+    url: `https://www.youtube.com/embed/${string}`
 };
 
 const videoDefaults: VideoSettings = {
@@ -41,7 +37,7 @@ const videoDefaults: VideoSettings = {
     width: "560"
 }
 
-const videoSelection = [
+const videoSelection: VideoSelection[] = [
     {
         title: "Knowing Me, Knowing You",
         url: "https://www.youtube.com/embed/iUrzicaiRLU"
@@ -79,24 +75,21 @@ type PageElements = {
 type ResultElement<T extends string> =
     T extends keyof PageElements ? PageElements[T] : HTMLElement;
 
-type FieldNames<T> = keyof T;
-
-function findElementWithID<T extends FieldNames<PageElements>>(id: T): ResultElement<T> {
+function findElementWithID<T extends string>(id: T): ResultElement<T> {
     const result = document.getElementById(id);
-    if (result === null) {
+    if(result === null) {
         throw new Error(`Cannot find Element with id: ${id}`);
     }
     return result as ResultElement<T>;
 }
 
 function loadFormControls(): FormControls {
-
     const controls: FormControlsOptional = {};
-    controls.form = findElementWithID("videoSettingsForm");
-    controls.height = findElementWithID("videoHeight");
-    controls.width = findElementWithID("videoWidth");
-    controls.mainVideo = findElementWithID("mainVideoURL");
-    controls.backupVideo = findElementWithID("backupVideoURL");
+    controls.form          = findElementWithID("videoSettingsForm");
+    controls.height        = findElementWithID("videoHeight");
+    controls.width         = findElementWithID("videoWidth");
+    controls.mainVideo     = findElementWithID("mainVideoURL");
+    controls.backupVideo   = findElementWithID("backupVideoURL");
 
     return controls as FormControls;
 }

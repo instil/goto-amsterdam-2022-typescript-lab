@@ -1,11 +1,3 @@
-type GotoPartial<T> = {
-    [K in keyof T]?: T[K];
-};
-
-type GotoStringify<T> = {
-    [K in keyof T]: string;
-};
-
 type VideoModel = {
     mainTitle: string;
     mainUrl: URL;
@@ -23,13 +15,17 @@ type FormControls = {
     backupVideo: HTMLSelectElement
 }
 
-type FormControlsOptional = GotoPartial<FormControls>;
-type VideoSettings = GotoStringify<VideoModel>;
-type VideoSettingsOptional = GotoPartial<VideoSettings>;
+type Stringify<T> = {
+    [K in keyof T]: string;
+}
 
-type VideoBackupSettings = {
-    backupTitle: string;
-    backupUrl: string;
+type FormControlsOptional = Partial<FormControls>;
+type VideoSettings = Stringify<VideoModel>;
+type VideoSettingsOptional = Partial<VideoSettings>;
+type VideoBackupSettings = Pick<VideoSettings, "backupTitle" | "backupUrl">;
+type VideoSelection = {
+    title: string,
+    url: `https://www.youtube.com/embed/${string}`
 };
 
 const videoDefaults: VideoSettings = {
@@ -41,7 +37,7 @@ const videoDefaults: VideoSettings = {
     width: "560"
 }
 
-const videoSelection = [
+const videoSelection: VideoSelection[] = [
     {
         title: "Knowing Me, Knowing You",
         url: "https://www.youtube.com/embed/iUrzicaiRLU"
@@ -129,20 +125,6 @@ function loadSettings(): VideoSettings {
     return settings as VideoSettings;
 }
 
-type NumericFields<T> = {
-    [K in keyof T as T[K] extends number ? K : never] : T[K]
-};
-
-type VideoPrefix<T> = {
-    [K in keyof T as `video${Capitalize<string & K>}`] : T[K]
-}
-
-type VideoDimensions = VideoPrefix<GotoStringify<NumericFields<VideoModel>>>;
-
-function logSizeChange(size: VideoDimensions) {
-    console.log(`Changing video size to ${size.videoHeight} by ${size.videoWidth}`);
-}
-
 function onFormSubmit(event: Event) {
     console.log("Settings form submitted");
 
@@ -155,13 +137,8 @@ function onFormSubmit(event: Event) {
 
     video.height = settings.height;
     video.width = settings.width;
-
-    logSizeChange({
-        videoHeight: settings.height,
-        videoWidth: settings.width
-    });
-
     video.src = settings.mainUrl;
+
     videoTitle.textContent = settings.mainTitle;
 
     backupVideo.backupTitle = settings.backupTitle;
