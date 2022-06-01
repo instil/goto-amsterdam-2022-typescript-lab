@@ -1,8 +1,8 @@
-type GotoPartial<T> = {
+type MyPartial<T> = {
     [K in keyof T]?: T[K];
 };
 
-type GotoStringify<T> = {
+type MyStringify<T> = {
     [K in keyof T]: string;
 };
 
@@ -23,9 +23,9 @@ type FormControls = {
     backupVideo: HTMLSelectElement
 }
 
-type FormControlsOptional = GotoPartial <FormControls>;
-type VideoSettings = GotoStringify<VideoModel>;
-type VideoSettingsOptional = GotoPartial<VideoSettings>;
+type FormControlsOptional = MyPartial <FormControls>;
+type VideoSettings = MyStringify<VideoModel>;
+type VideoSettingsOptional = MyPartial<VideoSettings>;
 
 type VideoBackupSettings = {
     backupTitle: string;
