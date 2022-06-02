@@ -77,7 +77,7 @@ type ResultElement<T extends string> =
 
 function findElementWithID<T extends string>(id: T): ResultElement<T> {
     const result = document.getElementById(id);
-    if(result === null) {
+    if (result === null) {
         throw new Error(`Cannot find Element with id: ${id}`);
     }
     return result as ResultElement<T>;
@@ -85,11 +85,11 @@ function findElementWithID<T extends string>(id: T): ResultElement<T> {
 
 function loadFormControls(): FormControls {
     const controls: FormControlsOptional = {};
-    controls.form          = findElementWithID("videoSettingsForm");
-    controls.height        = findElementWithID("videoHeight");
-    controls.width         = findElementWithID("videoWidth");
-    controls.mainVideo     = findElementWithID("mainVideoURL");
-    controls.backupVideo   = findElementWithID("backupVideoURL");
+    controls.form = findElementWithID("videoSettingsForm");
+    controls.height = findElementWithID("videoHeight");
+    controls.width = findElementWithID("videoWidth");
+    controls.mainVideo = findElementWithID("mainVideoURL");
+    controls.backupVideo = findElementWithID("backupVideoURL");
 
     return controls as FormControls;
 }

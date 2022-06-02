@@ -126,7 +126,7 @@ function loadSettings(): VideoSettings {
 }
 
 type NumericFields<T> = {
-    [K in keyof T as T[K] extends number ? K : never] : T[K]
+    [K in keyof T as T[K] extends number ? K : never]: T[K]
 };
 
 type VideoDimensions = Stringify<NumericFields<VideoModel>>;

@@ -86,7 +86,7 @@ function findElementWithID<T extends FieldNames<PageElements>>(id: T): ResultEle
 }
 
 type FetchOnDemand<T> = {
-    [K in keyof T as `fetch${Capitalize<string & K>}`] : () => T[K]
+    [K in keyof T as `fetch${Capitalize<string & K>}`]: () => T[K]
 };
 
 type OnDemandControls = FetchOnDemand<FormControls>;
@@ -94,11 +94,11 @@ type OnDemandControls = FetchOnDemand<FormControls>;
 function loadFormControls(): OnDemandControls {
 
     const controls: FetchOnDemand<FormControlsOptional> = {};
-    controls.fetchForm          = () => findElementWithID("videoSettingsForm");
-    controls.fetchHeight        = () => findElementWithID("videoHeight");
-    controls.fetchWidth         = () => findElementWithID("videoWidth");
-    controls.fetchMainVideo     = () => findElementWithID("mainVideoURL");
-    controls.fetchBackupVideo   = () => findElementWithID("backupVideoURL");
+    controls.fetchForm = () => findElementWithID("videoSettingsForm");
+    controls.fetchHeight = () => findElementWithID("videoHeight");
+    controls.fetchWidth = () => findElementWithID("videoWidth");
+    controls.fetchMainVideo = () => findElementWithID("mainVideoURL");
+    controls.fetchBackupVideo = () => findElementWithID("backupVideoURL");
 
     return controls as OnDemandControls;
 }
@@ -132,11 +132,11 @@ function loadSettings(): VideoSettings {
 }
 
 type NumericFields<T> = {
-    [K in keyof T as T[K] extends number ? K : never] : T[K]
+    [K in keyof T as T[K] extends number ? K : never]: T[K]
 };
 
 type VideoPrefix<T> = {
-    [K in keyof T as `video${Capitalize<string & K>}`] : T[K]
+    [K in keyof T as `video${Capitalize<string & K>}`]: T[K]
 }
 
 type VideoDimensions = VideoPrefix<Stringify<NumericFields<VideoModel>>>;

@@ -23,7 +23,7 @@ type FormControls = {
     backupVideo: HTMLSelectElement
 }
 
-type FormControlsOptional = MyPartial <FormControls>;
+type FormControlsOptional = MyPartial<FormControls>;
 type VideoSettings = MyStringify<VideoModel>;
 type VideoSettingsOptional = MyPartial<VideoSettings>;
 
