@@ -129,14 +129,10 @@ type NumericFields<T> = {
     [K in keyof T as T[K] extends number ? K : never] : T[K]
 };
 
-type VideoPrefix<T> = {
-    [K in keyof T as `video${Capitalize<string & K>}`] : T[K]
-}
-
-type VideoDimensions = VideoPrefix<Stringify<NumericFields<VideoModel>>>;
+type VideoDimensions = Stringify<NumericFields<VideoModel>>;
 
 function logSizeChange(size: VideoDimensions) {
-    console.log(`Changing video size to ${size.videoHeight} by ${size.videoWidth}`);
+    console.log(`Changing video size to ${size.height} by ${size.width}`);
 }
 
 function onFormSubmit(event: Event) {
@@ -152,10 +148,7 @@ function onFormSubmit(event: Event) {
     video.height = settings.height;
     video.width = settings.width;
 
-    logSizeChange({
-        videoHeight: settings.height,
-        videoWidth: settings.width
-    });
+    logSizeChange(settings);
 
     video.src = settings.mainUrl;
     videoTitle.textContent = settings.mainTitle;

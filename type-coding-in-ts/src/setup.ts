@@ -9,11 +9,11 @@ import {doSetupV7} from "./iteration-7/implementation";
 
 
 export function doSetup() {
-    // doSetupV1();
+    doSetupV1();
     // doSetupV2();
     // doSetupV3()
     // doSetupV4();
     // doSetupV5();
     // doSetupV6();
-    doSetupV7();
+    // doSetupV7();
 }
