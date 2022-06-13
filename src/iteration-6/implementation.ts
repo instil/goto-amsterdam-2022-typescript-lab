@@ -72,17 +72,12 @@ type PageElements = {
     switchButton: HTMLButtonElement
 }
 
-type ResultElement<T extends string> =
-    T extends keyof PageElements ? PageElements[T] : HTMLElement;
-
-type FieldNames<T> = keyof T;
-
-function findElementWithID<T extends FieldNames<PageElements>>(id: T): ResultElement<T> {
+function findElementWithID<T extends keyof PageElements>(id: T): PageElements[T] {
     const result = document.getElementById(id);
     if (result === null) {
         throw new Error(`Cannot find Element with id: ${id}`);
     }
-    return result as ResultElement<T>;
+    return result as PageElements[T];
 }
 
 function loadFormControls(): FormControls {
@@ -129,10 +124,10 @@ type NumericFields<T> = {
     [K in keyof T as T[K] extends number ? K : never]: T[K]
 };
 
-type VideoDimensions = Stringify<NumericFields<VideoModel>>;
+type VideoDimensions = NumericFields<VideoModel>;
 
-function logSizeChange(size: VideoDimensions) {
-    console.log(`Changing video size to ${size.height} by ${size.width}`);
+function logNumbers(dimensions: VideoDimensions) {
+    Object.entries(dimensions).forEach(([key, value]) => console.log(`${key} = ${value}`));
 }
 
 function onFormSubmit(event: Event) {
@@ -148,7 +143,10 @@ function onFormSubmit(event: Event) {
     video.height = settings.height;
     video.width = settings.width;
 
-    logSizeChange(settings);
+    logNumbers({
+        height: Number(settings.width),
+        width: Number(settings.height),
+    });
 
     video.src = settings.mainUrl;
     videoTitle.textContent = settings.mainTitle;

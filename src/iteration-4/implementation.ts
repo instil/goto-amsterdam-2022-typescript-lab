@@ -1,3 +1,16 @@
+// TODO 4a - The type VideoModel is used to represent the settings ultimately
+//           Generate the VideoSettings type from the VideoModel type
+//           - Consider creating your own mapped type or look at the Record helper
+//             https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type
+type VideoModel = {
+    mainTitle: string;
+    mainUrl: URL;
+    backupTitle: string;
+    backupUrl: URL;
+    height: number;
+    width: number;
+};
+
 type VideoSettings = {
     mainTitle: string;
     mainUrl: string;

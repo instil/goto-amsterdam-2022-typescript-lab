@@ -52,10 +52,7 @@ Now that the data structures have been improved we turn our attention to the uns
 
 ### Iteration 5 - Strongly Typing Parameters ###
 
-The `findElementWithID` function created above is still stringly typed, in that any string value can be passed as the parameter. To fix this we:
-
-* Create a `FieldNames` type, which resolves to a union of property names.
-* Use `FieldNames<PageElements>` as the parameter type in `findElementWithID`. This means that the compiler will only accept a string which is also the name of a property in `PageElements`. Your IDE should be able to give you a list of all the permitted options.
+With the newly introduced `VideoModel` type we generate `VideoSettings`.
 
 ### Iteration 6 - Basic Conditional Types ###
 
@@ -63,8 +60,7 @@ In this iteration we imagine there is a new requirement to log when the numerica
 
 * Create a Conditional Type called `NumericFields` - which selects properties whose type is `number`
 * Use this type to select the correct properties from `VideoModel`
-* The resulting type is then mapped again using `Stringify` to create a type called `VideoDimensions`
-* This `VideoDimensions` type is now used in a `logSizeChange` function
+* This `VideoDimensions` type is now used in a `logNumbers` function
 
 ### Iteration 7 - Advanced Conditional Types ###
 

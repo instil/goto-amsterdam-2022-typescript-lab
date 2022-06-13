@@ -20,7 +20,8 @@ type Stringify<T> = {
 }
 
 type FormControlsOptional = Partial<FormControls>;
-type VideoSettings = Stringify<VideoModel>;
+// type VideoSettings = Stringify<VideoModel>;
+type VideoSettings = Record<keyof VideoModel, string>;
 type VideoSettingsOptional = Partial<VideoSettings>;
 type VideoBackupSettings = Pick<VideoSettings, "backupTitle" | "backupUrl">;
 type VideoSelection = {
@@ -72,17 +73,12 @@ type PageElements = {
     switchButton: HTMLButtonElement
 }
 
-type ResultElement<T extends string> =
-    T extends keyof PageElements ? PageElements[T] : HTMLElement;
-
-type FieldNames<T> = keyof T;
-
-function findElementWithID<T extends FieldNames<PageElements>>(id: T): ResultElement<T> {
+function findElementWithID<T extends keyof PageElements>(id: T): PageElements[T] {
     const result = document.getElementById(id);
     if (result === null) {
         throw new Error(`Cannot find Element with id: ${id}`);
     }
-    return result as ResultElement<T>;
+    return result as PageElements[T];
 }
 
 function loadFormControls(): FormControls {
@@ -125,6 +121,13 @@ function loadSettings(): VideoSettings {
     return settings as VideoSettings;
 }
 
+// TODO 5a - Instead of any, use a type which is all the numeric fields from VideoModel
+//           Create a mapped type with conditional to extract the number fields from any type
+//           - HINT: Look at https://www.typescriptlang.org/docs/handbook/2/conditional-types.html
+function logNumbers(dimensions: any) {
+    Object.entries(dimensions).forEach(([key, value]) => console.log(`${key} = ${value}`));
+}
+
 function onFormSubmit(event: Event) {
     console.log("Settings form submitted");
 
@@ -138,6 +141,11 @@ function onFormSubmit(event: Event) {
     video.height = settings.height;
     video.width = settings.width;
     video.src = settings.mainUrl;
+
+    logNumbers({
+        height: Number(settings.width),
+        width: Number(settings.height),
+    });
 
     videoTitle.textContent = settings.mainTitle;
 
