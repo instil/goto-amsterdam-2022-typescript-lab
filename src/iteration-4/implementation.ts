@@ -1,10 +1,10 @@
-type VideoModel = {
+type VideoSettings = {
     mainTitle: string;
-    mainUrl: URL;
+    mainUrl: string;
     backupTitle: string;
-    backupUrl: URL;
-    height: number;
-    width: number;
+    backupUrl: string;
+    height: string;
+    width: string;
 };
 
 type FormControls = {
@@ -15,12 +15,7 @@ type FormControls = {
     backupVideo: HTMLSelectElement
 }
 
-type Stringify<T> = {
-    [K in keyof T]: string;
-}
-
 type FormControlsOptional = Partial<FormControls>;
-type VideoSettings = Stringify<VideoModel>;
 type VideoSettingsOptional = Partial<VideoSettings>;
 type VideoBackupSettings = Pick<VideoSettings, "backupTitle" | "backupUrl">;
 type VideoSelection = {
@@ -72,15 +67,12 @@ type PageElements = {
     switchButton: HTMLButtonElement
 }
 
-type ResultElement<T extends string> =
-    T extends keyof PageElements ? PageElements[T] : HTMLElement;
-
-function findElementWithID<T extends string>(id: T): ResultElement<T> {
+function findElementWithID<T extends keyof PageElements>(id: T): PageElements[T] {
     const result = document.getElementById(id);
     if (result === null) {
         throw new Error(`Cannot find Element with id: ${id}`);
     }
-    return result as ResultElement<T>;
+    return result as PageElements[T];
 }
 
 function loadFormControls(): FormControls {

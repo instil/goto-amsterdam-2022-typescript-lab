@@ -2,17 +2,13 @@ type MyPartial<T> = {
     [K in keyof T]?: T[K];
 };
 
-type MyStringify<T> = {
-    [K in keyof T]: string;
-};
-
-type VideoModel = {
+type VideoSettings = {
     mainTitle: string;
-    mainUrl: URL;
+    mainUrl: string;
     backupTitle: string;
-    backupUrl: URL;
-    height: number;
-    width: number;
+    backupUrl: string;
+    height: string;
+    width: string;
 };
 
 type FormControls = {
@@ -24,9 +20,10 @@ type FormControls = {
 }
 
 type FormControlsOptional = MyPartial<FormControls>;
-type VideoSettings = MyStringify<VideoModel>;
 type VideoSettingsOptional = MyPartial<VideoSettings>;
 
+// TODO 2a - Derive the VideoBackupSettings type from VideoSettings
+//          - Look at the Pick type - https://www.typescriptlang.org/docs/handbook/utility-types.html#picktype-keys
 type VideoBackupSettings = {
     backupTitle: string;
     backupUrl: string;
@@ -41,7 +38,10 @@ const videoDefaults: VideoSettings = {
     width: "560"
 }
 
-const videoSelection = [
+// TODO 2b - Create a type for VideoSelection (each item)
+//           - The type should use a Template Literal Type to make the URL more type safe
+//             https://www.typescriptlang.org/docs/handbook/2/template-literal-types.html
+const videoSelections = [
     {
         title: "Knowing Me, Knowing You",
         url: "https://www.youtube.com/embed/iUrzicaiRLU"
@@ -137,7 +137,7 @@ function switchVideo(event: Event) {
 }
 
 function populateSelectWithOptions(select: HTMLSelectElement) {
-    videoSelection.forEach(item => {
+    videoSelections.forEach(item => {
         const option = document.createElement("option");
         option.setAttribute("value", item.url);
         option.textContent = item.title;

@@ -1,12 +1,6 @@
-type VideoSettingsOptional = {
-    mainTitle?: string;
-    mainUrl?: string;
-    backupTitle?: string;
-    backupUrl?: string;
-    height?: string;
-    width?: string;
-};
 
+// TODO 1a - Remove the duplication here with VideoSettings and VideoSettingsOptional
+//          - Look at the Partial type - https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype
 type VideoSettings = {
     mainTitle: string;
     mainUrl: string;
@@ -16,10 +10,28 @@ type VideoSettings = {
     width: string;
 };
 
+type VideoSettingsOptional = {
+    mainTitle?: string;
+    mainUrl?: string;
+    backupTitle?: string;
+    backupUrl?: string;
+    height?: string;
+    width?: string;
+};
+
 type VideoBackupSettings = {
     backupTitle: string;
     backupUrl: string;
 };
+
+// TODO 1b - Remove the duplication here with FormControls and FormControlsOptional (using Partial again)
+type FormControls = {
+    form: HTMLFormElement
+    height: HTMLInputElement,
+    width: HTMLInputElement,
+    mainVideo: HTMLSelectElement,
+    backupVideo: HTMLSelectElement
+}
 
 type FormControlsOptional = {
     form?: HTMLFormElement,
@@ -29,13 +41,7 @@ type FormControlsOptional = {
     backupVideo?: HTMLSelectElement
 }
 
-type FormControls = {
-    form: HTMLFormElement
-    height: HTMLInputElement,
-    width: HTMLInputElement,
-    mainVideo: HTMLSelectElement,
-    backupVideo: HTMLSelectElement
-}
+// TODO 1c - Try creating your own Partial type
 
 const videoDefaults: VideoSettings = {
     mainTitle: "GOTO Amsterdam 2019 Highlights",

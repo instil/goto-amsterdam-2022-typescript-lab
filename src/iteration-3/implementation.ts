@@ -1,10 +1,10 @@
-type VideoModel = {
+type VideoSettings = {
     mainTitle: string;
-    mainUrl: URL;
+    mainUrl: string;
     backupTitle: string;
-    backupUrl: URL;
-    height: number;
-    width: number;
+    backupUrl: string;
+    height: string;
+    width: string;
 };
 
 type FormControls = {
@@ -15,19 +15,14 @@ type FormControls = {
     backupVideo: HTMLSelectElement
 }
 
-type Stringify<T> = {
-    [K in keyof T]: string;
-}
-
 type FormControlsOptional = Partial<FormControls>;
-type VideoSettings = Stringify<VideoModel>;
 type VideoSettingsOptional = Partial<VideoSettings>;
 type VideoBackupSettings = Pick<VideoSettings, "backupTitle" | "backupUrl">;
-type VideoSelection = {
+
+interface VideoSelection {
     title: string,
     url: `https://www.youtube.com/embed/${string}`
-};
-
+}
 
 const videoDefaults: VideoSettings = {
     mainTitle: "GOTO Amsterdam 2019 Highlights",
@@ -64,6 +59,13 @@ let backupVideo: VideoBackupSettings = {
 
 function loadFormControls(): FormControls {
     const controls: FormControlsOptional = {};
+
+    // TODO 3a - Extract a function "findElementById" to read a named element
+    //           - The element name should be restricted to the names used the existing getElementById calls in this file
+    // TODO 3b - Automatically infer the correct HTML return type from the input name
+    //           = HINT: Create a new type which has the names as field names and the field types as the return type
+    // TODO 3c - Replace all document.getElementById calls with your new function
+    //           - e.g. controls.form = findElementWithID("videoSettingsForm"); // Correctly types as HTMLFormElement
     controls.form = document.getElementById("videoSettingsForm") as HTMLFormElement;
     controls.height = document.getElementById("videoHeight") as HTMLInputElement;
     controls.width = document.getElementById("videoWidth") as HTMLInputElement;
