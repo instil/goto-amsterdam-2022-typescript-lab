@@ -25,6 +25,7 @@ type VideoBackupSettings = {
 };
 
 // TODO 1b - Remove the duplication here with FormControls and FormControlsOptional (using Partial again)
+// TODO 1c - Try creating your own Partial type
 type FormControls = {
     form: HTMLFormElement
     height: HTMLInputElement,
@@ -40,8 +41,6 @@ type FormControlsOptional = {
     mainVideo?: HTMLSelectElement,
     backupVideo?: HTMLSelectElement
 }
-
-// TODO 1c - Try creating your own Partial type
 
 const videoDefaults: VideoSettings = {
     mainTitle: "GOTO Amsterdam 2019 Highlights",
