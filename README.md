@@ -64,7 +64,6 @@ In this iteration we imagine there is a new requirement to log when the numerica
 
 ### Iteration 7 - Advanced Conditional Types ###
 
-In this iteration we imagine that we need to fetch the elements from the web page on demand. To do this we:
+In this iteration we imagine that we need an interface to write out the model settings
 
-* Create a type called `FetchOnDemand` which maps over an existing type and declares a **fetch** function for each property. So in the case of a property called **foobar** of type `Date` there would instead be a function called **fetchFoobar** with a type of `() => Date`
-* We use this type to derive an `OnDemandControls` type from `FormControls`. This is then implemented and used in the implementation.
+* Create a `VideoModelWriter` that has all of the members of the model as inputs to specifically named methods
