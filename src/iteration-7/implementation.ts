@@ -72,45 +72,34 @@ type PageElements = {
     switchButton: HTMLButtonElement
 }
 
-type ResultElement<T extends string> =
-    T extends keyof PageElements ? PageElements[T] : HTMLElement;
-
-type FieldNames<T> = keyof T;
-
-function findElementWithID<T extends FieldNames<PageElements>>(id: T): ResultElement<T> {
+function findElementWithID<T extends keyof PageElements>(id: T): PageElements[T] {
     const result = document.getElementById(id);
     if (result === null) {
         throw new Error(`Cannot find Element with id: ${id}`);
     }
-    return result as ResultElement<T>;
+    return result as PageElements[T];
 }
 
-type FetchOnDemand<T> = {
-    [K in keyof T as `fetch${Capitalize<string & K>}`]: () => T[K]
-};
+function loadFormControls(): FormControls {
 
-type OnDemandControls = FetchOnDemand<FormControls>;
+    const controls: FormControlsOptional = {};
+    controls.form = findElementWithID("videoSettingsForm");
+    controls.height = findElementWithID("videoHeight");
+    controls.width = findElementWithID("videoWidth");
+    controls.mainVideo = findElementWithID("mainVideoURL");
+    controls.backupVideo = findElementWithID("backupVideoURL");
 
-function loadFormControls(): OnDemandControls {
-
-    const controls: FetchOnDemand<FormControlsOptional> = {};
-    controls.fetchForm = () => findElementWithID("videoSettingsForm");
-    controls.fetchHeight = () => findElementWithID("videoHeight");
-    controls.fetchWidth = () => findElementWithID("videoWidth");
-    controls.fetchMainVideo = () => findElementWithID("mainVideoURL");
-    controls.fetchBackupVideo = () => findElementWithID("backupVideoURL");
-
-    return controls as OnDemandControls;
+    return controls as FormControls;
 }
 
 function loadSettings(): VideoSettings {
     const controls = loadFormControls();
     const settings: VideoSettingsOptional = {};
 
-    settings.height = controls.fetchHeight().value;
-    settings.width = controls.fetchWidth().value;
+    settings.height = controls.height.value;
+    settings.width = controls.width.value;
 
-    const mainVideoOption = controls.fetchMainVideo().selectedOptions[0];
+    const mainVideoOption = controls.mainVideo.selectedOptions[0];
     settings.mainUrl = mainVideoOption.value;
     const mainTitleText = mainVideoOption.textContent;
     if (mainTitleText !== null) {
@@ -119,7 +108,7 @@ function loadSettings(): VideoSettings {
         settings.mainTitle = "No title for main selection";
     }
 
-    const backupVideoOption = controls.fetchBackupVideo().selectedOptions[0];
+    const backupVideoOption = controls.backupVideo.selectedOptions[0];
     settings.backupUrl = backupVideoOption.value;
     const backupTitleText = backupVideoOption.textContent;
     if (backupTitleText !== null) {
@@ -135,14 +124,10 @@ type NumericFields<T> = {
     [K in keyof T as T[K] extends number ? K : never]: T[K]
 };
 
-type VideoPrefix<T> = {
-    [K in keyof T as `video${Capitalize<string & K>}`]: T[K]
-}
+type VideoDimensions = NumericFields<VideoModel>;
 
-type VideoDimensions = VideoPrefix<Stringify<NumericFields<VideoModel>>>;
-
-function logSizeChange(size: VideoDimensions) {
-    console.log(`Changing video size to ${size.videoHeight} by ${size.videoWidth}`);
+function logNumbers(dimensions: VideoDimensions) {
+    Object.entries(dimensions).forEach(([key, value]) => console.log(`${key} = ${value}`));
 }
 
 function onFormSubmit(event: Event) {
@@ -158,9 +143,9 @@ function onFormSubmit(event: Event) {
     video.height = settings.height;
     video.width = settings.width;
 
-    logSizeChange({
-        videoHeight: settings.height,
-        videoWidth: settings.width
+    logNumbers({
+        height: Number(settings.width),
+        width: Number(settings.height),
     });
 
     video.src = settings.mainUrl;
@@ -198,17 +183,53 @@ export function doSetupV7() {
     const videoTitle = findElementWithID("videoTitle");
     const video = findElementWithID("theVideo");
 
-    populateSelectWithOptions(controls.fetchMainVideo());
-    populateSelectWithOptions(controls.fetchBackupVideo());
+    populateSelectWithOptions(controls.mainVideo);
+    populateSelectWithOptions(controls.backupVideo);
 
-    controls.fetchForm().onsubmit = onFormSubmit;
+    controls.form.onsubmit = onFormSubmit;
     switchButton.onclick = switchVideo;
 
-    controls.fetchWidth().value = videoDefaults.width;
-    controls.fetchHeight().value = videoDefaults.height;
+    controls.width.value = videoDefaults.width;
+    controls.height.value = videoDefaults.height;
 
     video.src = videoDefaults.mainUrl;
     video.height = videoDefaults.height;
     video.width = videoDefaults.width;
     videoTitle.textContent = videoDefaults.mainTitle;
+}
+
+type VideoModelWriter  = {
+    [K in keyof VideoModel as `write${Capitalize<K>}`]: (input: VideoModel[K]) => void
+} & {
+    flush(): void;
+}
+
+class VideoModelConsoleWriter implements VideoModelWriter {
+    flush(): void {
+        console.log("Flushing");
+    }
+
+    writeBackupTitle(input: string): void {
+        console.log(`BackupTitle: ${input}`);
+    }
+
+    writeBackupUrl(input: URL): void {
+        console.log(`BackupUrl: ${input}`);
+    }
+
+    writeHeight(input: number): void {
+        console.log(`Height: ${input}`);
+    }
+
+    writeMainTitle(input: string): void {
+        console.log(`MainTitle: ${input}`);
+    }
+
+    writeMainUrl(input: URL): void {
+        console.log(`MainUrl: ${input}`);
+    }
+
+    writeWidth(input: number): void {
+        console.log(`Width: ${input}`);
+    }
 }

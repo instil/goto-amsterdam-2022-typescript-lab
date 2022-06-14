@@ -197,3 +197,48 @@ export function doSetupV6() {
     video.width = videoDefaults.width;
     videoTitle.textContent = videoDefaults.mainTitle;
 }
+
+// TODO 6a - Generate this type by deriving from ViewModel
+//           - HINT: Use a type mapping with Template Literal String key re-mapping
+//             https://www.typescriptlang.org/docs/handbook/2/template-literal-types.html#capitalizestringtype
+//           - You will also need an intersection to also have the flush method
+//             https://www.typescriptlang.org/docs/handbook/unions-and-intersections.html#intersection-types
+interface VideoModelWriter {
+    writeMainTitle(input: string): void;
+    writeMainUrl(input: URL): void;
+    writeBackupTitle(input: string): void;
+    writeBackupUrl(input: URL): void;
+    writeHeight(input: number): void;
+    writeWidth(input: number): void;
+    flush(): void;
+}
+
+class VideoModelConsoleWriter implements VideoModelWriter {
+    flush(): void {
+        console.log("Flushing");
+    }
+
+    writeBackupTitle(input: string): void {
+        console.log(`BackupTitle: ${input}`);
+    }
+
+    writeBackupUrl(input: URL): void {
+        console.log(`BackupUrl: ${input}`);
+    }
+
+    writeHeight(input: number): void {
+        console.log(`Height: ${input}`);
+    }
+
+    writeMainTitle(input: string): void {
+        console.log(`MainTitle: ${input}`);
+    }
+
+    writeMainUrl(input: URL): void {
+        console.log(`MainUrl: ${input}`);
+    }
+
+    writeWidth(input: number): void {
+        console.log(`Width: ${input}`);
+    }
+}
